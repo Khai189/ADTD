@@ -5,12 +5,104 @@
     <script src="https://cdn.jsdelivr.net/npm/p5@1.11.10/lib/addons/p5.sound.min.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"> -->
+       <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
 
   </head>
   <body>
-    <main>
+     <h1>ADTD: Attention Defecit Tower Defense</h1>
+     <h2>Warning: Playing this tower defense may result in feelings of being overwhelmed in awe and shock</h2>
+     <div id = "center_text">
+       <p>How much information can you handle at once? Let's see... </p>
+     </div>
+      
+      <div id="content">
+        
+      <div class = "container">
+        <h2>Enemies</h2>
+        <div id = "enemys">
+          <h3>Demon, summons portals using it's left hand to let enemies float through time.</h3>
+          <div class = "enemy_inner">
+              <div class="img_enemy_front">
+                <img width = 200px src="/images/demon.png"></img>
+              </div>
+              <div class = "img_enemy_back">
+                <img width = 200px src = "images/angel.png"></img>
+              </div>
+          </div>
+          
+        </div>
+        <div id = "enemys">
+          <h3>Angel, locks up towers and force you to buy them again. Kill them quick or your forces will be diminished...</h3>
+            <div class="img_enemy_front">
+              <img width = 200px src = "images/angel.png"></img>
+            </div>
+        </div>
+       
+        <div id = "enemys">
+          <h3>Warrior, occasionally rallys troops which increases their resistance to tower types. Its motivation doesn't last long...</h3>
+          <div class="img_enemy_front">
+            <img width = 200px src="/images/demon.png"></img>
+          </div>
+        </div>
+       
+        <div id = "enemys">
+          <h3>Werewolf, transforms into a heinous beast upon hitting low health. Procastinate and wait to kill them or face the wrath they shall bring... </h3>
+          <div class="img_enemy_front">
+            <img width = 200px src="/images/demon.png"></img>
+          </div>
+        </div>
+       
+        <div id = "enemys">
+           <h3>Distractor, forces you to play a minigame occasionally. Don't fail, or else everything suddenly will become much faster than you remember...</h3>
+            <div class="img_enemy_front">
+              <img width = 200px src="/images/demon.png"></img>
+            </div>
+        </div>
+      
+        <div id = "enemys">
+           <h3>Necromancer, revives dead allies at a fraction of their true power. Kill quickly or face the consequences of your past murders</h3>
+           <div class="img_enemy_front">
+              <img width = 200px src="/images/demon.png"></img>
+           </div>
+        </div>
+      
+        <div id = "enemys">
+          <h3>Tyrant, taunts all towers in a certain radius and forces them to target him. Plan to slow him down as much as you can, or you may not be able to kill every enemy in time...</h3>
+            <div class="img_enemy_front">
+              <img width = 200px src="/images/demon.png"></img>
+            </div>
+        </div>
+       
+        <div id = "enemys">
+          <h3>Loner, harmless in a group, but by itself becomes 5x as fast and strong. Do not save them for last...</h3>
+            <div class="img_enemy_front">
+              <img width = 200px src="/images/demon.png"></img>
+            </div>
+        </div>
+       
+      </div>
+     
+      
+       <main>
      
     </main>
     <script src="sketch.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script> -->
+    <div class = "right-container">
+      <div class="green">
+          <h2>Allies</h2>
+          <h3>Ice Tower, slows down nearby enemies for 5 seconds</h3>
+
+          <h3>Fire Tower, sets nearby enemies on fire for 5 seconds</h3>
+
+          <h3>Bomb Tower, hits all enemies in a certain radius</h3>
+
+          <h3>Shop, allows you to buy items and towers. Don't get caught stealing...</h3>
+      </div>
+      </div>
+      
+    </div>
   </body>
 </html>
