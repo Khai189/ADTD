@@ -1,0 +1,183 @@
+
+
+html, body {
+  margin: auto;
+  padding: 0;
+  background-color: black;
+  font-family: 'Press Start 2P'; 
+}
+
+
+canvas {
+  display: inline-block;
+  margin-top: 20px;
+  margin: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 0;
+  padding-right: 0;
+  border: 5px solid lightcoral;
+  border-radius: 10px;
+  max-height: 100%;
+  max-width: 100%;
+  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABFklEQVRYR9WXURLDIAhE6/0PbSdOtUpcd1Gnpv1KGpTHBpCE1/cXq+vrMph7dGvXZTtpfW10DCA5jrH1H0Jhs5E0hnZdCR+vb5S8Nn8mQCeS9BdSalYJqMBjAGzq59xAESN7VFVUgV8AZB/dZBR7QTFDCqGquvUBVVoEtgIwpQRzmANSFHgWQKExHdIrPeuMvQNDarXe6nC/AutgV3JW+6bgqQLeV8FekRtgV+ToDKEKnACYKsfZjjkam7a0ZpYTytwmgainpC3HvwBocgKOxqRjehoR9DFKNFYtOwCGYCszobeCbl26N6yyQ6g8X/Wex/rBPsNEV6qAMaJPMynIHQCoSqS9JSMmwef51LflTgCRszU7DvAGiV6mHWfsaVUAAAAASUVORK5CYII=), auto !important;
+}
+
+h2.green{
+  color: green;
+  text-align: center;
+}
+
+h2{
+  color: red;
+  text-align: center;
+}
+
+h3{
+  color: lightblue;
+  padding: 20px;
+}
+
+h1{
+  color: rgb(140, 83, 238);
+  text-align: center;
+}
+p{
+  color: lightblue;
+}
+img{
+  max-width: 100%;
+  background-color: white;
+  border: 5px solid rgb(203, 39, 39);
+}
+
+.enemy_inner{
+  perspective: 1000px;
+  display: grid;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+
+
+.img_enemy_front{
+  display: inline-block;
+  width: auto;     
+  height: auto;
+  border-radius: 5px; 
+}
+
+.img_enemy_back{
+  display: inline-block;
+  width: auto;
+  height: auto;
+  transform: rotateY(180deg);
+}
+
+.img_enemy_front, .img_enemy_back{
+  grid-column: 1;
+  grid-row: 1;
+  backface-visibility: hidden;
+}
+
+.img_enemy_front:hover, 
+.img_enemy_back:hover{
+  transition: all .5s ease;
+}
+
+.enemy_list{
+  display: inline-block;
+  text-align: left;
+}
+
+#center_text{
+  justify-content: center;
+  margin: center;
+  text-align: center;
+
+}
+
+div.container{
+  overflow: scroll;
+  display: inline-block;
+  overflow-x: hidden;
+  justify-content: center;
+  width: 20%;
+  margin-right: 100px;
+  padding-left: 20px;
+  padding-right: 20px;
+  height: 800px;
+  direction: rtl;
+  text-align: left;
+}
+
+div.green{
+  color: green;
+  text-align: center;
+}
+::-webkit-scrollbar{
+  width: 20px;
+  background-color: black;
+
+}
+
+::-webkit-scrollbar-thumb{
+  background: white;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #cacaca; 
+}
+::-webkit-scrollbar-track{
+  box-shadow: inset 0 0 5px gray;
+  border-radius: 10px;
+}
+
+
+::-webkit-scrollbar-corner{
+  background: black
+}
+div.right-container{
+  overflow: auto;
+  overflow-x: hidden;
+  display: inline-block;
+  justify-content: center;
+  width: 20%;
+  margin-left: 100px;
+  padding-left: 20px;
+  padding-right: 20px;
+  height: 800px;
+
+}
+
+div#enemys{
+  display: block;
+  justify-content: center;
+  text-align: center;
+  width: auto;
+  height: auto;
+  border-radius: 10px;
+  border: 3px solid green;
+  padding: 10px;
+  direction: ltr;
+  margin: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+div#enemys:hover >.enemy_inner{
+  transform: rotateY(180deg);
+}
+
+
+#content{
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  margin: 100px;
+
+}
+
+
