@@ -1,5 +1,5 @@
 // Tower Defense Variables
-let money = 0;
+let money = 1;
 let game;
 let towers = [];
 let base;
