@@ -6,6 +6,8 @@ let base;
 let locked_towers = [];
 let available_towers = [];
 let follow_mouse = false;
+let menu = false;
+let tower_list = [];
 
 // Textbox Variables
 let duration = 0;
@@ -21,18 +23,29 @@ const mapped_enemies = new Map();
 let portals = [];
 let dead_enemies = [];
 let pos_enemies = [
-  "Warrior",
   "Angel",
   "Distract",
-  "Speedster",
   "Demon",
-  "Werewolf",
   "Necromancer",
   "Tyrant",
 ];
 let pos_enemies_money = [1, 3, 3, 3, 5, 5, 7, 10];
+let activated = true;
 
-// Special Status Effects Associated with Enemies
+let lane1 = [];
+let lane2 = [];
+let lane3 = [];
+let lane4 = [];
+let lane5 = [];
+
+let lane1_enemies = [];
+let lane2_enemies = [];
+let lane3_enemies = [];
+let lane4_enemies = [];
+let lane5_enemies = [];
+
+
+// Special Status Effects Associated with Enemies and Towers
 
 let slow_elapsed = 0;
 let og_speed = [];
@@ -40,6 +53,8 @@ let iced = [];
 let flames = [];
 let flame_elapsed = 0;
 let flame_time_interval = 1000;
+let rage = false;
+let no_rage = true;
 
 // Minigame Variables
 let souls = [];
@@ -76,8 +91,8 @@ function setup() {
     20,
     1,
     "ice",
-    width / 2,
-    height / 2,
+    0,
+    0,
     0,
     "common",
     20,
@@ -85,32 +100,121 @@ function setup() {
     test_tower
   );
   available_towers.push(test_ice_tower);
+  available_towers.push(test_ice_tower);
+
+  // Path creation
+
+  for(let i = 0;i<15;i++){
+    game.env[30][i] = 1;
+    lane1.push(30, i)
+    game.env[31][i] = 1;
+    lane2.push(31, i)
+    game.env[32][i] = 1;
+    lane3.push(32, i)
+    game.env[33][i] = 1;
+    lane4.push(33, i)
+    game.env[34][i] = 1;
+    lane5.push(34, i)
+
+    game.env[10][i] = 1;
+    lane1.push(10, i)
+    game.env[11][i] = 1;
+    lane2.push(11, i)
+    game.env[12][i] = 1;
+    lane3.push(12, i)
+    game.env[13][i] = 1
+    lane4.push(13, i)
+    game.env[14][i] = 1
+    lane5.push(14, i)
+
+    game.env[20][i+5] = 1
+    lane1.push(20, i+5)
+    game.env[21][i+5] = 1
+    lane2.push(21, i+5)
+    game.env[22][i+5] = 1
+    lane3.push(22, i+5)
+    game.env[23][i+5] = 1
+    lane4.push(23, i+5)
+    game.env[24][i+5] = 1
+    lane5.push(24, i+5)
+
+    game.env[20][i+10] = 1
+    game.env[21][i+10] = 1
+    game.env[22][i+10] = 1
+    game.env[23][i+10] = 1
+    game.env[24][i+10] = 1
+
+    game.env[1][i+20] = 1
+    game.env[2][i+20] = 1
+    game.env[3][i+20] = 1
+    game.env[4][i+20] = 1
+    game.env[5][i+20] = 1
+  }
+  for(let j=30; j>=10;j--){
+    game.env[j][14] = 1
+    game.env[j][13] = 1
+    game.env[j][12] = 1
+    game.env[j][11] = 1
+    game.env[j][10] = 1
+  }
+  for(let k=15; k<25;k++){
+    game.env[k][0] = 1
+    game.env[k][1] = 1
+    game.env[k][2] = 1
+    game.env[k][3] = 1
+    game.env[k][4] = 1
+
+    game.env[k][20] = 1
+    game.env[k][21] = 1
+    game.env[k][22] = 1
+    game.env[k][23] = 1
+    game.env[k][24] = 1
+
+    game.env[k-5][20] = 1
+    game.env[k-5][21] = 1
+    game.env[k-5][22] = 1
+    game.env[k-5][23] = 1
+    game.env[k-5][24] = 1
+
+    game.env[k-15][20] = 1
+    game.env[k-15][21] = 1
+    game.env[k-15][22] = 1
+    game.env[k-15][23] = 1
+    game.env[k-15][24] = 1
+
+
+
+  }
 }
 
 function draw() {
   background(0);
   // In-between rounds
-  game.env[15][15] = 6;
-  game.env[14][15] = 5;
-  game.env[14][16] = 5;
-  game.env[14][14] = 5;
-  game.env[15][16] = 5;
-  game.env[15][14] = 5;
-  game.env[16][15] = 5;
-  game.env[16][14] = 5;
-  game.env[16][16] = 5;
+  game.env[20][20] = 6;
+  game.env[19][20] = 5;
+  game.env[19][21] = 5;
+  game.env[19][19] = 5;
+  game.env[20][21] = 5;
+  game.env[20][19] = 5;
+  game.env[21][20] = 5;
+  game.env[21][19] = 5;
+  game.env[21][21] = 5;
  
 
   game.show_matrix();
 
-  for (var tower of available_towers) {
+  if(menu){
+    print(tower_list.length)
+    for (let i = 0;i<tower_list.length;i++) {
+    new_tower = tower_list[i]
+    tower = new_tower[0].clone()
     tower.clearTint();
     let w = constrain(ceil(mouseX / 20), 0, 79);
     let h = constrain(ceil(mouseY / 20), 0, 79);
-    print(w, h);
-    if (follow_mouse == tower && mouseIsPressed) {
+    if (mouseIsPressed) {
       tower.x = mouseX;
       tower.y = mouseY;
+      tower.display()
 
       if ((game.env[h][w] == 6) && mouseIsPressed) {
         tower.x = (w * width) / 40 - width / 80;
@@ -123,29 +227,28 @@ function draw() {
       game.show_matrix();
       tower.place();
       tower.clearTint();
-      follow_mouse = 0;
       tower.x = (w * width) / 40 - width / 80;
       tower.y = (h * width) / 40 - width / 40;
-      available_towers.splice(available_towers.indexOf(tower));
+      tower_list[i][1]-=.1
+      print(tower_list[i])
+      if (tower_list[i][1] == 0){
+        tower_list.splice(i)
+      }
       towers.push(tower);
+      print("towers")
       print(towers);
-      print(!towers.includes(tower));
-    } else if (
-      mouseIsPressed &&
-      tower.stock > 0 &&
-      dist(tower.x, tower.y, mouseX, mouseY) < 20 &&
-      !towers.includes(tower)
-    ) {
-      follow_mouse = tower;
-      print("pressed");
-      tower.x = mouseX;
-      tower.y = mouseY;
     } else {
-      tower.x = width/2
-      tower.y = height/2
+      tower = null
     }
-    tower.display();
+    if(tower){
+      tower.display();
+      tower.clearTint();
+    }
+      
   }
+  }
+  
+  // Analyzing towers by clicking on them when placed
 
   for (var placed_tower of towers) {
     let locked = true;
@@ -154,9 +257,11 @@ function draw() {
       dist(mouseX, mouseY, placed_tower.x, placed_tower.y) < 20 &&
       locked
     ) {
-      fill(255, 0, 0, 30);
+      push();
+      fill(0, 255, 0, .5);
       circle(placed_tower.x, placed_tower.y, placed_tower.range * 30);
       locked = locked == true ? false : true;
+      pop();
     } else if (
       mouseIsPressed &&
       dist(mouseX, mouseY, placed_tower.x, placed_tower.y) < 20
@@ -166,10 +271,32 @@ function draw() {
     placed_tower.display();
   }
 
+  if(rage){
+    
+    if(rage_elapsed < 10000 && no_rage){
+      for (var tower of towers){
+        tower.attack += 5
+        tower.range +=5
+      }
+      no_rage = false
+    }else if (rage_elapsed >= 10000){
+      for (var tower of towers){
+        tower.attack -= 5
+        tower.range -=5
+      }
+      rage = false;
+      no_rage=true;
+    }
+    rage_elapsed+=deltaTime
+  }else{
+    rage_elapsed = 0;
+  }
+
   // Enemy Logic During Waves
 
   current_enemies.forEach((enem) => {
     if (enem.health <= 0) {
+      activated = True
       money += pos_enemies_money[pos_enemies.indexOf(enem)];
       current_enemies.splice(enemies.indexOf(enem), 1);
       const pos_dead = flames.map((inner) => inner[0]);
@@ -185,10 +312,8 @@ function draw() {
       if (flames[i][1] < 5) {
         flames[i][0].health -= flames[i][0].maxH * 0.05;
         flames[i][1] += 1;
-        print(flames[i][0].health);
       } else {
         flames.splice(i, 1);
-        print("Bye! " + flames);
       }
     }
     flame_elapsed = millis();
@@ -216,8 +341,19 @@ function draw() {
     }
   }
   
-   showMenu(mouseX, mouseY)
-
+  
+  if(menu){
+    for(let i = 0;i<200;i++){
+      setTimeout(menuCreation(i), 500)
+      
+    }
+    circle(720, height/2, 30)
+    if (dist(mouseX, mouseY, 720, height/2) < 10 && mouseIsPressed){
+      menu = false;
+  }
+  }else{
+    showMenu(mouseX, mouseY)
+  }
   if (lock) {
     background(0);
     minigame();
@@ -361,41 +497,7 @@ class Demon extends Enemy {
   }
 }
 
-class Priest extends Enemy {
-  constructor(
-    health,
-    damage,
-    speed,
-    x,
-    y,
-    visibility,
-    healing,
-    maxH,
-    healTimeInterval = 4000,
-    type = "angelic"
-  ) {
-    super(health, damage, speed, x, y, visibility, maxH, type);
-    this.healTimer = 0;
-    this.interval = healTimeInterval;
-    this.healing = healing;
-  }
-  attack(base) {
-    super.attack(base);
-  }
 
-  heal(enemies) {
-    if (this.healTimer <= 0) {
-      this.healTimer = this.interval;
-      for (var enemy of enemies) {
-        if (dist(enemy.x, enemy.y, this.x, this.y) < 2) {
-          enemy.health = min(enemy_health + healing, enemy.maxH);
-        }
-      }
-    } else {
-      this.healTimer -= deltaTime;
-    }
-  }
-}
 
 class Angel extends Enemy {
   constructor(health, damage, speed, x, y, visibility, maxH, type = "angelic") {
@@ -418,24 +520,6 @@ class Angel extends Enemy {
   }
 }
 
-class Warrior extends Enemy {
-  constructor(
-    health,
-    damage,
-    speed,
-    x,
-    y,
-    visibility,
-    maxH,
-    type = "physical"
-  ) {
-    super(health, damage, speed, x, y, visibility, maxH, type);
-  }
-  attack(base) {
-    super.attack(base);
-  }
-}
-
 class Necromancer extends Enemy {
   constructor(health, damage, speed, x, y, visibility, maxH, type = "magical") {
     super(health, damage, speed, x, y, visibility, maxH, type);
@@ -455,24 +539,6 @@ class Necromancer extends Enemy {
         enem.type = "undead";
       }
     }
-  }
-}
-
-class Speedster extends Enemy {
-  constructor(
-    health,
-    damage,
-    speed,
-    x,
-    y,
-    visibility,
-    maxH,
-    type = "physical"
-  ) {
-    super(health, damage, speed, x, y, visibility, maxH, type);
-  }
-  attack(base) {
-    super.attack(base);
   }
 }
 
@@ -515,23 +581,6 @@ class Tyrant extends Enemy {
   }
 }
 
-class Werewolf extends Enemy {
-  constructor(health, damage, speed, x, y, visibility, maxH, type = "bane") {
-    super(health, damage, speed, x, y, visibility, maxH, type);
-    this.transform = false;
-  }
-  attack(base) {
-    super.attack(base);
-  }
-
-  transform() {
-    if (this.health <= 0.5 * this.maxH) {
-      this.transform = true;
-      this.health = this.maxH;
-      this.speed *= 2;
-    }
-  }
-}
 
 // Shops and in-between waves
 
@@ -566,60 +615,86 @@ class Game {
 }
 
 class Wave {
-  constructor(enemies, spawnpoints, difficulty) {
+  constructor(enemies, difficulty) {
     this.enemies = enemies;
-    this.spawns = spawnpoints;
     this.diff = difficulty;
+    this.wave;
   }
-  chooseSpawn(spawnpoints) {
-    for (var spawn of spawnpoints) {
-      if (spawn.available) {
-        spawn.active = true;
-      }
-    }
+  chooseEnemies(wave) {
+    WaveProgression(wave)
   }
-  chooseEnemies(wave) {}
 }
 
 function WaveProgression(wave) {
   switch (wave) {
     case 1:
+      let enemy = Demon(50, 10, 1, 0, 0, true, 50)
+      let enemys = 10
+      for(let i =0;i<enemys;i++){
+        lane_choice = random([1, 2, 3, 4, 5]);
+        switch(lane_choice){
+          case 1:
+            lane1_enemies.push()
+          case 2:
+            lane2_enemies.push(enemy)
+          case 3:
+            lane3.enemies.push(enemy)
+          case 4:
+            lane4.enemies.push(enemy)
+          case 5:
+            lane5.enemies.push(enemy)
+        }
 
+        
+      }
     case 2:
+      let enemy1 = Demon(60, 10, 1, 0, 0, true, 50)
+      let enemy2 = Angel(30, 5, 1, 0, 0, true, 30)
+      enemys = 12;
+      for(let i =0;i<enemys;i++){
+        lane_choice = random([1, 2, 3, 4, 5]);
+        switch(lane_choice){
+          case 1:
+            lane1_enemies.push(random([enemy1, enemy2]))
+          case 2:
+            lane2_enemies.push(random([enemy1, enemy2]))
+          case 3:
+            lane3.enemies.push(random([enemy1, enemy2]))
+          case 4:
+            lane4.enemies.push(random([enemy1, enemy2]))
+          case 5:
+            lane5.enemies.push(random([enemy1, enemy2]))
+        }
+      }
 
     case 3:
+      enemy1 = Demon(60, 10, 1, 0, 0, true, 50)
+      enemy2 = Angel(30, 5, 1, 0, 0, true, 30)
+      let enemy3 = Tyrant(100, 8, 1, 0, 0, true, 100)
+      enemys = 15;
+      for(let i =0;i<enemys;i++){
+        lane_choice = random([1, 2, 3, 4, 5]);
+        switch(lane_choice){
+          case 1:
+            lane1_enemies.push(random([enemy1, enemy2, enemy3]))
+          case 2:
+            lane2_enemies.push(random([enemy1, enemy2, enemy3]))
+          case 3:
+            lane3.enemies.push(random([enemy1, enemy2, enemy3]))
+          case 4:
+            lane4.enemies.push(random([enemy1, enemy2, enemy3]))
+          case 5:
+            lane5.enemies.push(random([enemy1, enemy2, enemy3]))
+        }
+      }
 
     case 4:
 
     case 5:
 
-    case 6:
-
-    case 7:
-
-    case 8:
-
-    case 9:
-
-    case 10:
   }
 }
 
-class SkillTree {
-  constructor() {}
-}
-class EnemySpawn {
-  constructor(active, enemies = []) {
-    this.active = active;
-    this.enemies = enemies;
-  }
-  activate(wave) {
-    if (this.active) {
-      this.enemies = wave;
-    }
-  }
-  spawn() {}
-}
 class Base {
   constructor(health, saveState, maxH, damage) {
     this.health = health;
@@ -708,9 +783,48 @@ class Shop {
 
 function showMenu(x, y){
   circle(770, height/2, 30)
-  if (dist(x, y, 770, height/2) < 10){
-    
+  if (dist(x, y, 770, height/2) < 10 && mouseIsPressed){
+    menu = true;
   }
+  
+
+}
+
+function menuCreation(i){
+  push();
+  fill(150, 75, 0)
+  rectMode(CENTER);
+  square(1300-i, height/2, 800);
+
+  for(let i =0; i<available_towers.length; i++){
+    print("available_towers")
+    print(available_towers.length)
+    tower = available_towers[i]
+    let tower_type = tower.constructor
+    const existing = tower_list.findIndex(item=> {
+      return item[0] instanceof tower_type
+    });
+    if(existing !== -1){
+      tower_list[existing][1]+=1
+    }else{
+      tower_list.push([tower, 1])
+
+    }
+  }
+  available_towers = [];
+  
+  for(let i =0; i<tower_list.length;i++){
+    push();
+    fill("green")
+    tower_list[i][0].x = 750
+    tower_list[i][0].y = 100 + i * 150 
+    tower_list[i][0].display();
+    text(tower_list[i][1], 750, 150+i*150);
+    pop();
+  }
+  
+  
+  pop();
 }
 
 // Towers
@@ -803,6 +917,7 @@ class Tower {
       }
     }
   }
+  
 }
 
 class Flame extends Tower {
@@ -868,6 +983,13 @@ class Flame extends Tower {
     flame(enemy);
     super.attack(enemy, enemies);
   }
+  clone(){
+    const new_tower = new Flame(this.type,this.attack, this.range,
+      this.AOE,this.price,this.cooldown,this.special,this.x,this.y,this.level,
+      this.rarity,this.ogPrice,this.stock,this.img
+    )
+    return new_tower
+  }
 }
 
 class Ice extends Tower {
@@ -928,11 +1050,154 @@ class Ice extends Tower {
     slow(enemy);
     super.attack(enemy, enemies);
   }
+  clone(){
+    const new_tower = new Ice(this.type,this.attack, this.range,
+      this.AOE,this.price,this.cooldown,this.special,this.x,this.y,this.level,
+      this.rarity,this.ogPrice,this.stock,this.img
+    )
+    return new_tower
+  }
 }
+
+class Rage extends Tower {
+  constructor(
+    type,
+    attack,
+    range,
+    AOE,
+    price,
+    cooldown,
+    special,
+    x,
+    y,
+    level,
+    rarity,
+    ogPrice,
+    stock,
+    img
+  ) {
+    super(
+      type,
+      attack,
+      range,
+      AOE,
+      price,
+      cooldown,
+      special,
+      x,
+      y,
+      level,
+      rarity,
+      ogPrice,
+      stock,
+      img
+    );
+  }
+
+  buy(money) {
+    super.buy(money);
+  }
+
+  detect(enemy) {
+    super.detect(enemy);
+  }
+
+  typing(enemy) {
+    super.typing(enemy);
+  }
+
+  tintImageGreen() {
+    tint("green");
+  }
+  clearTint() {
+    noTint();
+  }
+
+  attack(enemy, enemies) {
+    super.attack(enemy, enemies);
+  }
+  rage(){
+    rage=true
+  }
+  clone(){
+    const new_tower = new Rage(this.type,this.attack, this.range,
+      this.AOE,this.price,this.cooldown,this.special,this.x,this.y,this.level,
+      this.rarity,this.ogPrice,this.stock,this.img
+    )
+    return new_tower
+  }
+}
+
+class Bomb extends Tower {
+  constructor(
+    type,
+    attack,
+    range,
+    AOE,
+    price,
+    cooldown,
+    special,
+    x,
+    y,
+    level,
+    rarity,
+    ogPrice,
+    stock,
+    img
+  ) {
+    super(
+      type,
+      attack,
+      range,
+      AOE,
+      price,
+      cooldown,
+      special,
+      x,
+      y,
+      level,
+      rarity,
+      ogPrice,
+      stock,
+      img
+    );
+  }
+
+  buy(money) {
+    super.buy(money);
+  }
+
+  detect(enemy) {
+    super.detect(enemy);
+  }
+
+  typing(enemy) {
+    super.typing(enemy);
+  }
+
+  tintImageGreen() {
+    tint("green");
+  }
+  clearTint() {
+    noTint();
+  }
+
+  attack(enemy, enemies) {
+    super.attack(enemy, enemies);
+  }
+  clone(){
+    const new_tower = new Bomb(this.type,this.attack, this.range,
+      this.AOE,this.price,this.cooldown,this.special,this.x,this.y,this.level,
+      this.rarity,this.ogPrice,this.stock,this.img
+    )
+    return new_tower
+  }
+}
+
+
 
 function flame(enemy) {
   for (var flame of flames) {
-    print(flame);
     if (flame[0] == enemy) {
       flame[1] = 0;
       return;
@@ -950,7 +1215,6 @@ function slow(enemy) {
   }
   iced.push([enemy, 0]);
   og_speed.push(enemy.speed);
-  print(og_speed + " og_speed");
 }
 
 
@@ -968,3 +1232,4 @@ function mousePressed() {
     }
   }
 }
+
