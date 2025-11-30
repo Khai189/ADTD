@@ -156,7 +156,7 @@ div.right-container{
 }
 
 div#enemys{
-  display: block;
+  display: inline-block;
   justify-content: center;
   text-align: center;
   width: auto;

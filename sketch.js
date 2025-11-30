@@ -8,6 +8,7 @@ let available_towers = [];
 let follow_mouse = false;
 let menu = false;
 let tower_list = [];
+let pressed = false;
 
 // Textbox Variables
 let duration = 0;
@@ -29,7 +30,7 @@ let pos_enemies = [
   "Necromancer",
   "Tyrant",
 ];
-let pos_enemies_money = [1, 3, 3, 3, 5, 5, 7, 10];
+let pos_enemies_money = [1, 3, 5, 7, 10];
 let activated = true;
 
 let lane1 = [];
@@ -66,13 +67,16 @@ let finished = false;
 let score = 0;
 let image_soul;
 let test_enem;
-let test_tower;
+let ice_tower;
 
 // Shop Variables
 
 function preload() {
-  image_soul = loadImage("temp_soul.webp");
-  test_tower = loadImage("images/ice.png");
+  image_soul = loadImage("images/spirit.png");
+  ice_tower = loadImage("images/ice.png");
+  fire_tower = loadImage("images/fire.png");
+  bomb_tower = loadImage("images/bomb.png");
+  rage_tower = loadImage("images/rage.png")
 }
 
 function setup() {
@@ -97,7 +101,7 @@ function setup() {
     "common",
     20,
     1,
-    test_tower
+    ice_tower
   );
   available_towers.push(test_ice_tower);
   available_towers.push(test_ice_tower);
@@ -106,37 +110,37 @@ function setup() {
 
   for(let i = 0;i<15;i++){
     game.env[30][i] = 1;
-    lane1.push(30, i)
+    lane1.push([30, i])
     game.env[31][i] = 1;
-    lane2.push(31, i)
+    lane2.push([31, i])
     game.env[32][i] = 1;
-    lane3.push(32, i)
+    lane3.push([32, i])
     game.env[33][i] = 1;
-    lane4.push(33, i)
+    lane4.push([33, i])
     game.env[34][i] = 1;
-    lane5.push(34, i)
+    lane5.push([34, i])
 
     game.env[10][i] = 1;
-    lane1.push(10, i)
+    lane1.push([10, i])
     game.env[11][i] = 1;
-    lane2.push(11, i)
+    lane2.push([11, i])
     game.env[12][i] = 1;
-    lane3.push(12, i)
+    lane3.push([12, i])
     game.env[13][i] = 1
-    lane4.push(13, i)
+    lane4.push([13, i])
     game.env[14][i] = 1
-    lane5.push(14, i)
+    lane5.push([14, i])
 
     game.env[20][i+5] = 1
-    lane1.push(20, i+5)
+    lane1.push([20, i+5])
     game.env[21][i+5] = 1
-    lane2.push(21, i+5)
+    lane2.push([21, i+5])
     game.env[22][i+5] = 1
-    lane3.push(22, i+5)
+    lane3.push([22, i+5])
     game.env[23][i+5] = 1
-    lane4.push(23, i+5)
+    lane4.push([23, i+5])
     game.env[24][i+5] = 1
-    lane5.push(24, i+5)
+    lane5.push([24, i+5])
 
     game.env[20][i+10] = 1
     game.env[21][i+10] = 1
@@ -182,14 +186,9 @@ function setup() {
     game.env[k-15][23] = 1
     game.env[k-15][24] = 1
 
-
+    
 
   }
-}
-
-function draw() {
-  background(0);
-  // In-between rounds
   game.env[20][20] = 6;
   game.env[19][20] = 5;
   game.env[19][21] = 5;
@@ -199,6 +198,14 @@ function draw() {
   game.env[21][20] = 5;
   game.env[21][19] = 5;
   game.env[21][21] = 5;
+  print(lane1[0])
+  print(lane1[0][0])
+}
+
+function draw() {
+  background(0);
+  // In-between rounds
+  
  
 
   game.show_matrix();
@@ -211,24 +218,31 @@ function draw() {
     tower.clearTint();
     let w = constrain(ceil(mouseX / 20), 0, 79);
     let h = constrain(ceil(mouseY / 20), 0, 79);
-    if (mouseIsPressed) {
+    print(w,  h)
+    if(dist(mouseX, mouseY, new_tower[0].x, new_tower[0].y) < 50 && mouseIsPressed){
+      pressed = true
+    }
+    if (pressed && mouseIsPressed) {
       tower.x = mouseX;
       tower.y = mouseY;
       tower.display()
 
-      if ((game.env[h][w] == 6) && mouseIsPressed) {
+      
+          
+      
+    }
+    if ((game.env[h][w] == 6) && mouseIsPressed) {
         tower.x = (w * width) / 40 - width / 80;
         tower.y = (h * width) / 40 - width / 40;
         tower.tintImageGreen();
-          
-      }else if (game.env[h][w] == 6) {
+    }else if (game.env[h][w] == 6 && !mouseIsPressed) {
       game.env[h][w] = 7
       game.show_matrix();
       tower.place();
       tower.clearTint();
       tower.x = (w * width) / 40 - width / 80;
       tower.y = (h * width) / 40 - width / 40;
-      tower_list[i][1]-=.1
+      tower_list[i][1]-=1
       print(tower_list[i])
       if (tower_list[i][1] == 0){
         tower_list.splice(i)
@@ -236,6 +250,7 @@ function draw() {
       towers.push(tower);
       print("towers")
       print(towers);
+      pressed = false;
     } else {
       tower = null
     }
@@ -246,12 +261,25 @@ function draw() {
     }
       
   }
-  }
   
   // Analyzing towers by clicking on them when placed
 
   for (var placed_tower of towers) {
     let locked = true;
+    enemy_to_attack = detection(current_enemies,
+      placed_tower.x,
+      placed_tower.y,
+      placed_tower.range
+    )
+    if(enemy_to_attack){
+      placed_tower.attack(enemy_to_attack)
+    }
+
+    if(placed_tower instanceof Rage){
+      if(random(0, 10000) <= 1){
+        placed_tower.rage()
+      }
+    }
     if (
       mouseIsPressed &&
       dist(mouseX, mouseY, placed_tower.x, placed_tower.y) < 20 &&
@@ -300,8 +328,12 @@ function draw() {
       money += pos_enemies_money[pos_enemies.indexOf(enem)];
       current_enemies.splice(enemies.indexOf(enem), 1);
       const pos_dead = flames.map((inner) => inner[0]);
+      const pos_slow = iced.map((inner) => inner[0]);
       if (pos_dead.includes(enem)) {
         flames.splice(flames.indexOf(enem), 1);
+      }
+      if(pos_slow.includes(enem)){
+        iced.splice(iced.indexOf(enem), 1)
       }
       dead_enemies.push(enem);
     }
@@ -385,15 +417,26 @@ class Soul {
   constructor(x, y, direction) {
     this.x = x;
     this.y = y;
-    this.xSpeed = direction * random(5, 12);
-    this.radius = random(20, 30);
+    this.xSpeed = direction * random(8, 14);
+    this.radius = random(10, 50);
     this.direction = direction;
   }
   update() {
+    push();
     noStroke();
     imageMode(CENTER);
-    image(image_soul, this.x, this.y, this.radius * 2, this.radius * 2);
+    if(this.direction == -1){
+      push();
+      translate(this.x + this.radius, this.y + this.radius); 
+      scale(-1, 1)
+      image(image_soul, -this.radius, -this.radius, this.radius * 2, this.radius * 2);
+      pop();
+    }else{
+       image(image_soul, this.x, this.y, this.radius * 2, this.radius * 2);
+    }
+   
     this.x += this.xSpeed;
+    pop();
   }
   checkPop() {
     if (dist(mouseX, mouseY, this.x, this.y) < this.radius * 2) {
@@ -425,18 +468,24 @@ function minigame() {
   }
 }
 
-function textBox(texts, x, y, w, h) {
-  textAlign(CENTER, CENTER);
-  {
-    push();
-    fill(0);
-    stroke("purple");
-    strokeWeight(5);
-    rect(x, y, w, h);
-    fill("purple");
-    text(texts, x, y, w, h);
-    pop();
-  }
+function textbox(x, y, w, h, message){
+  fill("black")
+  rectMode(CENTER)
+  noStroke()
+  rect(x, y, w+50, h+50)
+  stroke("black")
+  rect(x, y, w+25, h+25)
+  strokeWeight(0.75)
+  textFont(pixelFont)
+  textSize(11)
+  textAlign(CENTER, CENTER)
+  drawingContext.setLineDash([5, 15]);
+  stroke("black")
+  rect(x, y, w, h)
+  drawingContext.setLineDash([]);
+  fill("purple")
+  //noStroke()
+  text(message, x, y, w,h)
 }
 
 function placePortal(x, y, x1, y1) {
@@ -730,12 +779,12 @@ class Shop {
     this.anger = anger;
   }
 
-  steal(item) {
+  steal() {
     let success = random(0, 1);
-    if (sucess >= 0.6) {
+    if (success >= 0.6) {
       return true;
     } else {
-      anger += 1;
+      this.anger += 1;
       return false;
     }
   }
@@ -753,7 +802,7 @@ class Shop {
     }
   }
   open_shop() {
-    if (anger < 1) {
+    if (this.anger < 1) {
       return true;
     } else {
       return false;
@@ -819,7 +868,19 @@ function menuCreation(i){
     tower_list[i][0].x = 750
     tower_list[i][0].y = 100 + i * 150 
     tower_list[i][0].display();
-    text(tower_list[i][1], 750, 150+i*150);
+    pop();
+
+    push();
+    fill("black")
+    rectMode(CENTER)
+    rect(tower_list[i][0].x,
+       tower_list[i][0].y+70,
+      20,
+       20)
+    fill("white")
+    textAlign(CENTER, CENTER)
+    text(tower_list[i][1], tower_list[i][0].x,
+       tower_list[i][0].y+70)
     pop();
   }
   
@@ -901,8 +962,10 @@ class Tower {
     tint("green");
   }
   display() {
+    push()
     imageMode(CENTER);
-    image(this.img, this.x, this.y, 60, 60);
+    image(this.img, this.x, this.y, 90, 90);
+    pop()
   }
   clearTint() {
     noTint();
@@ -1231,5 +1294,19 @@ function mousePressed() {
       finished = true;
     }
   }
+}
+
+function detection(enemies, x, y, range){
+  let min_enemy_range = 1000
+  let min_enemy = null
+  for(var enemy of enemies){
+    if(dist(x, y, enemy.x, enemy.y) < range){
+      if(dist(x, y, enemy.x, enemy.y) < min_enemy_range){
+        min_enemy_range = dist(x, y, enemy.x, enemy.y)
+        min_enemy = enemy
+      }
+    }
+  }
+  return min_enemy
 }
 
