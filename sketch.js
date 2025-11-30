@@ -9,6 +9,11 @@ let follow_mouse = false;
 let menu = false;
 let tower_list = [];
 let pressed = false;
+let starting_screen = true;
+let current_wave = 1;
+let wave_activated = true;
+let cur_tower;
+let rage_elapsed = 0;
 
 // Textbox Variables
 let duration = 0;
@@ -76,7 +81,8 @@ function preload() {
   ice_tower = loadImage("images/ice.png");
   fire_tower = loadImage("images/fire.png");
   bomb_tower = loadImage("images/bomb.png");
-  rage_tower = loadImage("images/rage.png")
+  rage_tower = loadImage("images/rage.png");
+  retro_font = loadFont("fonts/PressStart2P-Regular.ttf")
 }
 
 function setup() {
@@ -85,12 +91,28 @@ function setup() {
   game = new Game(80, 80);
   game.matrix();
   base = new Base(500, 0, 500);
-  test_enem = new Demon(8, 10, 1, 0, 0, true, 50);
+  cur_tower = new Tower(
+    "magical",
+    20,
+    210,
+    0,
+    20,
+    1,
+    "none",
+    0,
+    0,
+    0,
+    "common",
+    20,
+    1,
+    null
+  );
+  test_enem = new Distract(8, 10, 1, 0, 0, true, 50);
   current_enemies.push(test_enem);
   test_ice_tower = new Ice(
     "magical",
-    10,
     5,
+    210,
     0,
     20,
     1,
@@ -103,8 +125,65 @@ function setup() {
     1,
     ice_tower
   );
+  test_fire_tower = new Flame(
+    "magical",
+    20,
+    210,
+    0,
+    20,
+    1,
+    "ice",
+    0,
+    0,
+    0,
+    "common",
+    20,
+    1,
+    fire_tower
+  );
+  test_bomb_tower = new Bomb(
+    "physical",
+    20,
+    210,
+    40,
+    20,
+    1,
+    "bomb",
+    0,
+    0,
+    0,
+    "common",
+    20,
+    1,
+    bomb_tower
+  );
+  test_rage_tower = new Rage(
+    "bane",
+    10,
+    510,
+    0,
+    20,
+    1,
+    "bomb",
+    0,
+    0,
+    0,
+    "common",
+    20,
+    1,
+    rage_tower
+  );
   available_towers.push(test_ice_tower);
   available_towers.push(test_ice_tower);
+  available_towers.push(test_fire_tower);
+  available_towers.push(test_fire_tower);
+  available_towers.push(test_bomb_tower);
+  available_towers.push(test_bomb_tower);
+  available_towers.push(test_bomb_tower);
+  available_towers.push(test_bomb_tower);
+  available_towers.push(test_rage_tower);
+  available_towers.push(test_rage_tower);
+
 
   // Path creation
 
@@ -189,15 +268,77 @@ function setup() {
     
 
   }
-  game.env[20][20] = 6;
-  game.env[19][20] = 5;
-  game.env[19][21] = 5;
-  game.env[19][19] = 5;
-  game.env[20][21] = 5;
-  game.env[20][19] = 5;
-  game.env[21][20] = 5;
-  game.env[21][19] = 5;
-  game.env[21][21] = 5;
+  game.env[17][17] = 6;
+  game.env[16][17] = 5;
+  game.env[16][18] = 5;
+  game.env[16][16] = 5;
+  game.env[17][18] = 5;
+  game.env[17][16] = 5;
+  game.env[18][17] = 5;
+  game.env[18][16] = 5;
+  game.env[18][18] = 5;
+
+  game.env[12][17] = 6;
+  game.env[11][17] = 5;
+  game.env[11][18] = 5;
+  game.env[11][16] = 5;
+  game.env[12][18] = 5;
+  game.env[12][16] = 5;
+  game.env[13][17] = 5;
+  game.env[13][16] = 5;
+  game.env[13][18] = 5;
+
+  game.env[7][17] = 6;
+  game.env[6][17] = 5;
+  game.env[6][18] = 5;
+  game.env[6][16] = 5;
+  game.env[7][18] = 5;
+  game.env[7][16] = 5;
+  game.env[8][17] = 5;
+  game.env[8][16] = 5;
+  game.env[8][18] = 5;
+
+  game.env[8][27] = 6;
+  game.env[7][27] = 5;
+  game.env[7][28] = 5;
+  game.env[7][26] = 5;
+  game.env[8][28] = 5;
+  game.env[8][26] = 5;
+  game.env[9][27] = 5;
+  game.env[9][26] = 5;
+  game.env[9][28] = 5;
+
+  game.env[17][7] = 6;
+  game.env[16][7] = 5;
+  game.env[16][8] = 5;
+  game.env[16][6] = 5;
+  game.env[17][8] = 5;
+  game.env[17][6] = 5;
+  game.env[18][7] = 5;
+  game.env[18][6] = 5;
+  game.env[18][8] = 5;
+
+  game.env[27][7] = 6;
+  game.env[26][7] = 5;
+  game.env[26][8] = 5;
+  game.env[26][6] = 5;
+  game.env[27][8] = 5;
+  game.env[27][6] = 5;
+  game.env[28][7] = 5;
+  game.env[28][6] = 5;
+  game.env[28][8] = 5;
+
+  game.env[27][17] = 6;
+  game.env[26][17] = 5;
+  game.env[26][18] = 5;
+  game.env[26][16] = 5;
+  game.env[27][18] = 5;
+  game.env[27][16] = 5;
+  game.env[28][17] = 5;
+  game.env[28][16] = 5;
+  game.env[28][18] = 5;
+
+
   print(lane1[0])
   print(lane1[0][0])
 }
@@ -205,38 +346,57 @@ function setup() {
 function draw() {
   background(0);
   // In-between rounds
+
+  if(starting_screen){
+    push();
+    textAlign(CENTER, CENTER)
+    fill(203, 195, 227)
+    textFont(retro_font)
+    textSize(25)
+    text("Click to start...", width/2, height/2)
+    pop();
+
+    if(mouseIsPressed && mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= 800){
+      starting_screen=false;
+    }
+    return;
+  }
+  if(wave_activated){
+    WaveProgression(current_wave)
+    current_enemies.push(lane1_enemies, lane2_enemies, lane3_enemies, lane4_enemies, lane5_enemies)
+    wave_activated = false
+  }
+  
   
  
 
   game.show_matrix();
-
+  // Controls how to place down towers (don't ask how long it took to implement this...)
   if(menu){
-    print(tower_list.length)
     for (let i = 0;i<tower_list.length;i++) {
     new_tower = tower_list[i]
     tower = new_tower[0].clone()
     tower.clearTint();
     let w = constrain(ceil(mouseX / 20), 0, 79);
     let h = constrain(ceil(mouseY / 20), 0, 79);
-    print(w,  h)
     if(dist(mouseX, mouseY, new_tower[0].x, new_tower[0].y) < 50 && mouseIsPressed){
       pressed = true
+      cur_tower = tower
     }
-    if (pressed && mouseIsPressed) {
+    if (pressed && mouseIsPressed && cur_tower.constructor == tower.constructor && game.env[w][h] != 6) {
       tower.x = mouseX;
-      tower.y = mouseY;
-      tower.display()
-
+      tower.y = mouseY;   
+      tower.display();
       
-          
       
     }
-    if ((game.env[h][w] == 6) && mouseIsPressed) {
+    if ((game.env[w][h] == 6) && mouseIsPressed && cur_tower.constructor == tower.constructor) {
         tower.x = (w * width) / 40 - width / 80;
         tower.y = (h * width) / 40 - width / 40;
         tower.tintImageGreen();
-    }else if (game.env[h][w] == 6 && !mouseIsPressed) {
-      game.env[h][w] = 7
+        tower.display();
+    }else if (game.env[w][h] == 6 && !mouseIsPressed && cur_tower.constructor == tower.constructor) {
+      game.env[w][h] = 7
       game.show_matrix();
       tower.place();
       tower.clearTint();
@@ -245,13 +405,13 @@ function draw() {
       tower_list[i][1]-=1
       print(tower_list[i])
       if (tower_list[i][1] == 0){
-        tower_list.splice(i)
+        tower_list.splice(i, 1)
       }
       towers.push(tower);
       print("towers")
       print(towers);
       pressed = false;
-    } else {
+    } else if(!mouseIsPressed){
       tower = null
     }
     } 
@@ -262,21 +422,21 @@ function draw() {
       
   }
   
-  // Analyzing towers by clicking on them when placed
+  // Analyzing towers by clicking on them when placed, shows range, etc.
 
   for (var placed_tower of towers) {
     let locked = true;
-    enemy_to_attack = detection(current_enemies,
-      placed_tower.x,
-      placed_tower.y,
-      placed_tower.range
-    )
-    if(enemy_to_attack){
-      placed_tower.attack(enemy_to_attack)
-    }
+    // enemy_to_attack = detection(current_enemies,
+    //   placed_tower.x,
+    //   placed_tower.y,
+    //   placed_tower.range
+    // )
+    // if(enemy_to_attack){
+    //   placed_tower.attack(enemy_to_attack)
+    // }
 
     if(placed_tower instanceof Rage){
-      if(random(0, 10000) <= 1){
+      if(random(0, 1000) <= 1 && no_rage){
         placed_tower.rage()
       }
     }
@@ -287,8 +447,18 @@ function draw() {
     ) {
       push();
       fill(0, 255, 0, .5);
-      circle(placed_tower.x, placed_tower.y, placed_tower.range * 30);
+      circle(placed_tower.x, placed_tower.y, placed_tower.range);
       locked = locked == true ? false : true;
+      if(placed_tower.AOE>0){
+        if(detection(current_enemies, placed_tower.x, placed_tower.y, placed_tower.range)){
+          near = detection(current_enemies, placed_tower.x, placed_tower.y, placed_tower.range)
+          circle(near.x, near.y, placed_tower.AOE)
+        }else{
+          circle(placed_tower.x + placed_tower.range/4,
+      placed_tower.y- placed_tower.range/4, placed_tower.AOE)
+      }
+        }
+        
       pop();
     } else if (
       mouseIsPressed &&
@@ -303,19 +473,29 @@ function draw() {
     
     if(rage_elapsed < 10000 && no_rage){
       for (var tower of towers){
-        tower.attack += 5
-        tower.range +=5
+        tower.damage *= 2
+        tower.range *= 2
       }
       no_rage = false
+    }else if(rage_elapsed <= 1000){
+      push();
+      fill("red")
+      background(0);
+      textSize(20);
+      textFont(retro_font);
+      textAlign(CENTER, CENTER)
+      text("I MISS THE RAGE", width/2, height/2)
+      pop();
     }else if (rage_elapsed >= 10000){
       for (var tower of towers){
-        tower.attack -= 5
-        tower.range -=5
+        tower.damage /=2
+        tower.range /=2
       }
       rage = false;
       no_rage=true;
     }
     rage_elapsed+=deltaTime
+    print(rage_elapsed)
   }else{
     rage_elapsed = 0;
   }
@@ -336,6 +516,22 @@ function draw() {
         iced.splice(iced.indexOf(enem), 1)
       }
       dead_enemies.push(enem);
+    }
+
+    if(enem instanceof Distract){
+      if(random(0, 10000) < 1){
+        enem.minigame()
+      }
+    }
+    if(enem instanceof Necromancer){
+      if(random(0, 10000) < 1){
+        if(dead_enemies.length >1){
+          enem.revive(dead_enemies)
+        }
+      }
+    }
+    if(enem instanceof Demon){
+
     }
   });
 
@@ -400,6 +596,7 @@ function draw() {
     } else if (lost >= 1) {
       current_enemies.forEach((enem) => {
         enem.speed *= 2;
+        enem.health += (enem.maxH-enem.health)/2
         enem.damage *= 2;
       });
       lock = false;
@@ -418,7 +615,7 @@ class Soul {
     this.x = x;
     this.y = y;
     this.xSpeed = direction * random(8, 14);
-    this.radius = random(10, 50);
+    this.radius = random(20, 50);
     this.direction = direction;
   }
   update() {
@@ -493,8 +690,8 @@ function placePortal(x, y, x1, y1) {
     [x, y],
     [x1, y1],
   ]);
-  game.env[y][x] = 2;
-  game.env[y1][x1] = 3;
+  game.env[x][y] = 2;
+  game.env[x1][y1] = 3;
 }
 
 function destroyPortal(x, y, x1, y1) {
@@ -503,13 +700,13 @@ function destroyPortal(x, y, x1, y1) {
       portals.splice(portals.indexOf(portals[i]), 1);
       break;
     }
-    game.env[y][x] = 0;
-    game.env[y1][x1] = 0;
+    game.env[x][y] = 0;
+    game.env[x1][y1] = 0;
   }
 }
 
 class Enemy {
-  constructor(health, damage, speed, x, y, visibility, maxH, type) {
+  constructor(health, damage, speed, x, y, visibility, maxH, lane=null, type) {
     this.health = health;
     this.damage = damage;
     this.speed = speed;
@@ -518,6 +715,7 @@ class Enemy {
     this.type = type;
     this.visibility = visibility;
     this.maxH = maxH;
+    this.lane = lane;
   }
   attack(base) {
     base.health -= this.damage;
@@ -530,8 +728,8 @@ class Enemy {
 }
 
 class Demon extends Enemy {
-  constructor(health, damage, speed, x, y, visibility, maxH, type = "demonic") {
-    super(health, damage, speed, x, y, visibility, maxH, type);
+  constructor(health, damage, speed, x, y, visibility, maxH, lane=null, type = "demonic") {
+    super(health, damage, speed, x, y, visibility, maxH, lane, type);
   }
   attack(base) {
     super.attack(base);
@@ -549,8 +747,8 @@ class Demon extends Enemy {
 
 
 class Angel extends Enemy {
-  constructor(health, damage, speed, x, y, visibility, maxH, type = "angelic") {
-    super(health, damage, speed, x, y, visibility, maxH, type);
+  constructor(health, damage, speed, x, y, visibility, maxH, lane=null, type = "angelic") {
+    super(health, damage, speed, x, y, visibility, maxH, lane, type);
   }
   attack(base) {
     super.attack(base);
@@ -570,8 +768,8 @@ class Angel extends Enemy {
 }
 
 class Necromancer extends Enemy {
-  constructor(health, damage, speed, x, y, visibility, maxH, type = "magical") {
-    super(health, damage, speed, x, y, visibility, maxH, type);
+  constructor(health, damage, speed, x, y, visibility, maxH, lane=null,type = "magical") {
+    super(health, damage, speed, x, y, visibility, maxH, lane, type);
   }
   attack(base) {
     super.attack(base);
@@ -581,7 +779,7 @@ class Necromancer extends Enemy {
     if (dead.length > 1) {
       revived = dead.splice(0, 2);
       dead.splice(0, 2);
-      for (var enem of revive) {
+      for (var enem of revived) {
         enem.health = 0.3 * enem.maxH;
         enem.maxH = 0.3 * enem.maxH;
         enem.damage = 0.3 * enem.damage;
@@ -592,8 +790,8 @@ class Necromancer extends Enemy {
 }
 
 class Distract extends Enemy {
-  constructor(health, damage, speed, x, y, visibility, maxH, type = "bane") {
-    super(health, damage, speed, x, y, visibility, maxH, type);
+  constructor(health, damage, speed, x, y, visibility, maxH, lane=null, type = "bane") {
+    super(health, damage, speed, x, y, visibility, maxH, lane, type);
   }
   attack(base) {
     super.attack(base);
@@ -613,9 +811,10 @@ class Tyrant extends Enemy {
     y,
     visibility,
     maxH,
+    lane,
     type = "physical"
   ) {
-    super(health, damage, speed, x, y, visibility, maxH, type);
+    super(health, damage, speed, x, y, visibility, maxH, lane=null, type);
   }
   attack(base) {
     super.attack(base);
@@ -677,79 +876,262 @@ class Wave {
 function WaveProgression(wave) {
   switch (wave) {
     case 1:
-      let enemy = Demon(50, 10, 1, 0, 0, true, 50)
+      let enemy1;
+      let enemy2;
+      let enemy3;
+      let enemy4;
+      let enemy5;
+      let enemy; 
       let enemys = 10
+      let cur_enemy;
       for(let i =0;i<enemys;i++){
         lane_choice = random([1, 2, 3, 4, 5]);
         switch(lane_choice){
           case 1:
-            lane1_enemies.push()
+            enemy = new Demon(50, 10, 1, 0, 0, true, 50)
+            lane1_enemies.push(enemy)
+            enemy.lane = lane1
+            break;
           case 2:
+            enemy = new Demon(50, 10, 1, 0, 0, true, 50)
             lane2_enemies.push(enemy)
+            enemy.lane = lane2
+            break;
           case 3:
-            lane3.enemies.push(enemy)
+            enemy = new Demon(50, 10, 1, 0, 0, true, 50)
+            lane3_enemies.push(enemy)
+            enemy.lane = lane3
+            break;
           case 4:
-            lane4.enemies.push(enemy)
+            enemy = new Demon(50, 10, 1, 0, 0, true, 50)
+            lane4_enemies.push(enemy)
+            enemy.lane = lane4
+            break;
           case 5:
-            lane5.enemies.push(enemy)
+            enemy = new Demon(50, 10, 1, 0, 0, true, 50)
+            lane5_enemies.push(enemy)
+            enemy.lane = lane5
+            break;
         }
 
-        
       }
+      break;
     case 2:
-      let enemy1 = Demon(60, 10, 1, 0, 0, true, 50)
-      let enemy2 = Angel(30, 5, 1, 0, 0, true, 30)
       enemys = 12;
       for(let i =0;i<enemys;i++){
         lane_choice = random([1, 2, 3, 4, 5]);
         switch(lane_choice){
           case 1:
-            lane1_enemies.push(random([enemy1, enemy2]))
+            enemy1 = new Demon(60, 10, 1, 0, 0, true, 60)
+            enemy2 = new Angel(30, 5, 1, 0, 0, true, 30)
+            cur_enemy = random([enemy1, enemy2])
+            cur_enemy.lane = lane1
+            lane1_enemies.push(cur_enemy)
+            break;
           case 2:
-            lane2_enemies.push(random([enemy1, enemy2]))
+            enemy1 = new Demon(60, 10, 1, 0, 0, true, 60)
+            enemy2 = new Angel(30, 5, 1, 0, 0, true, 30)
+            cur_enemy = random([enemy1, enemy2])
+            cur_enemy.lane = lane2
+            lane2_enemies.push(cur_enemy)
+            break;
           case 3:
-            lane3.enemies.push(random([enemy1, enemy2]))
+            enemy1 = new Demon(60, 10, 1, 0, 0, true, 60)
+            enemy2 = new Angel(30, 5, 1, 0, 0, true, 30)
+            cur_enemy = random([enemy1, enemy2])
+            cur_enemy.lane = lane3
+            lane3_enemies.push(cur_enemy)
+            break;
           case 4:
-            lane4.enemies.push(random([enemy1, enemy2]))
+            enemy1 = new Demon(60, 10, 1, 0, 0, true, 60)
+            enemy2 = new Angel(30, 5, 1, 0, 0, true, 30)
+            cur_enemy = random([enemy1, enemy2])
+            cur_enemy.lane = lane4
+            lane4_enemies.push(cur_enemy)
+            break;
           case 5:
-            lane5.enemies.push(random([enemy1, enemy2]))
+            enemy1 = new Demon(60, 10, 1, 0, 0, true, 60)
+            enemy2 = new Angel(30, 5, 1, 0, 0, true, 30)
+            cur_enemy = random([enemy1, enemy2])
+            cur_enemy.lane = lane5
+            lane5_enemies.push(cur_enemy)
+            break;
         }
       }
+      break;
 
     case 3:
-      enemy1 = Demon(60, 10, 1, 0, 0, true, 50)
-      enemy2 = Angel(30, 5, 1, 0, 0, true, 30)
-      let enemy3 = Tyrant(100, 8, 1, 0, 0, true, 100)
       enemys = 15;
       for(let i =0;i<enemys;i++){
         lane_choice = random([1, 2, 3, 4, 5]);
         switch(lane_choice){
           case 1:
-            lane1_enemies.push(random([enemy1, enemy2, enemy3]))
+            enemy1 = new Demon(70, 10, 1, 0, 0, true, 70)
+            enemy2 = new Angel(40, 5, 1, 0, 0, true, 40)
+            enemy3 = new Tyrant(100, 8, 1, 0, 0, true, 100)            
+            cur_enemy = random([enemy1, enemy2, enemy3])
+            cur_enemy.lane = lane1
+            lane1_enemies.push(cur_enemy)
+            break;
           case 2:
-            lane2_enemies.push(random([enemy1, enemy2, enemy3]))
+            enemy1 = new Demon(70, 10, 1, 0, 0, true, 70)
+            enemy2 = new Angel(40, 5, 1, 0, 0, true, 40)
+            enemy3 = new Tyrant(100, 8, 1, 0, 0, true, 100)
+            cur_enemy = random([enemy1, enemy2, enemy3])
+            cur_enemy.lane = lane2
+            lane2_enemies.push(cur_enemy)
+            break;
           case 3:
-            lane3.enemies.push(random([enemy1, enemy2, enemy3]))
+            enemy1 = new Demon(70, 10, 1, 0, 0, true, 70)
+            enemy2 = new Angel(40, 5, 1, 0, 0, true, 40)
+            enemy3 = new Tyrant(100, 8, 1, 0, 0, true, 100)
+            cur_enemy = random([enemy1, enemy2, enemy3])
+            cur_enemy.lane = lane3
+            lane3_enemies.push(cur_enemy)
+            break;
           case 4:
-            lane4.enemies.push(random([enemy1, enemy2, enemy3]))
+            enemy1 = new Demon(70, 10, 1, 0, 0, true, 70)
+            enemy2 = new Angel(40, 5, 1, 0, 0, true, 40)
+            enemy3 = new Tyrant(100, 8, 1, 0, 0, true, 100)
+            cur_enemy = random([enemy1, enemy2, enemy3])
+            cur_enemy.lane = lane4
+            lane4_enemies.push(cur_enemy)
+            break;
           case 5:
-            lane5.enemies.push(random([enemy1, enemy2, enemy3]))
+            enemy1 = new Demon(70, 10, 1, 0, 0, true, 70)
+            enemy2 = new Angel(40, 5, 1, 0, 0, true, 40)
+            enemy3 = new Tyrant(100, 8, 1, 0, 0, true, 100)
+            cur_enemy = random([enemy1, enemy2, enemy3])
+            cur_enemy.lane = lane5
+            lane5_enemies.push(cur_enemy)
+            break;
         }
       }
+      break;
 
     case 4:
+      enemys = 20;
+      for(let i =0;i<enemys;i++){
+        lane_choice = random([1, 2, 3, 4, 5]);
+        switch(lane_choice){
+          case 1:
+            enemy1 = new Demon(60, 10, 1, 0, 0, true, 60)
+            enemy2 = new Angel(30, 5, 1, 0, 0, true, 30)
+            enemy3 = new Tyrant(100, 8, 1, 0, 0, true, 100)
+            enemy4 = new Distract(50, 4, 1, 0, 0, true, 50)
+            cur_enemy = random([enemy1, enemy2, enemy3, enemy4])
+            cur_enemy.lane = lane1
+            lane1_enemies.push(cur_enemy)
+            break;
+          case 2:
+            enemy1 = new Demon(60, 10, 1, 0, 0, true, 60)
+            enemy2 = new Angel(30, 5, 1, 0, 0, true, 30)
+            enemy3 = new Tyrant(100, 8, 1, 0, 0, true, 100)
+            enemy4 = new Distract(50, 4, 1, 0, 0, true, 50)
+            cur_enemy = random([enemy1, enemy2, enemy3, enemy4])
+            cur_enemy.lane = lane2
+            lane2_enemies.push(cur_enemy)
+            break;
+          case 3:
+            enemy1 = new Demon(60, 10, 1, 0, 0, true, 60)
+            enemy2 = new Angel(30, 5, 1, 0, 0, true, 30)
+            enemy3 = new Tyrant(100, 8, 1, 0, 0, true, 100)
+            enemy4 = new Distract(50, 4, 1, 0, 0, true, 50)
+            cur_enemy = random([enemy1, enemy2, enemy3, enemy4])
+            cur_enemy.lane = lane3
+            lane3_enemies.push(cur_enemy)
+            break;
+          case 4:
+            enemy1 = new Demon(60, 10, 1, 0, 0, true, 60)
+            enemy2 = new Angel(30, 5, 1, 0, 0, true, 30)
+            enemy3 = new Tyrant(100, 8, 1, 0, 0, true, 100)
+            enemy4 = new Distract(50, 4, 1, 0, 0, true, 50)
+            cur_enemy = random([enemy1, enemy2, enemy3, enemy4])
+            cur_enemy.lane = lane4
+            lane4_enemies.push(cur_enemy)
+            break;
+          case 5:
+            enemy1 = new Demon(60, 10, 1, 0, 0, true, 60)
+            enemy2 = new Angel(30, 5, 1, 0, 0, true, 30)
+            enemy3 = new Tyrant(100, 8, 1, 0, 0, true, 100)
+            enemy4 = new Distract(50, 4, 1, 0, 0, true, 50)
+            cur_enemy = random([enemy1, enemy2, enemy3, enemy4])
+            cur_enemy.lane = lane5
+            lane5_enemies.push(cur_enemy)
+            break;
+        }
+      }
+      break;
 
     case 5:
-
+      enemys = 20;
+      for(let i =0;i<enemys;i++){
+        lane_choice = random([1, 2, 3, 4, 5]);
+        switch(lane_choice){
+          case 1:
+            enemy1 = new Demon(90, 10, 1, 0, 0, true, 90)
+            enemy2 = new Angel(60, 5, 1, 0, 0, true, 60)
+            enemy3 = new Tyrant(150, 8, 1, 0, 0, true, 150)
+            enemy4 = new Distract(80, 4, 1, 0, 0, true, 80)
+            enemy5 = new Necromancer(200, 1, 1, 0, 0, true, 200)
+            cur_enemy = random([enemy1, enemy2, enemy3, enemy4, enemy5])
+            cur_enemy.lane = lane1
+            lane1_enemies.push(cur_enemy)
+            break;
+          case 2:
+            enemy1 = new Demon(90, 10, 1, 0, 0, true, 90)
+            enemy2 = new Angel(60, 5, 1, 0, 0, true, 60)
+            enemy3 = new Tyrant(150, 8, 1, 0, 0, true, 150)
+            enemy4 = new Distract(80, 4, 1, 0, 0, true, 80)
+            enemy5 = new Necromancer(200, 1, 1, 0, 0, true, 200)
+            cur_enemy = random([enemy1, enemy2, enemy3, enemy4, enemy5])
+            cur_enemy.lane = lane2
+            lane2_enemies.push(cur_enemy)
+            break;
+          case 3:
+            enemy1 = new Demon(90, 10, 1, 0, 0, true, 90)
+            enemy2 = new Angel(60, 5, 1, 0, 0, true, 60)
+            enemy3 = new Tyrant(150, 8, 1, 0, 0, true, 150)
+            enemy4 = new Distract(80, 4, 1, 0, 0, true, 80)
+            enemy5 = new Necromancer(200, 1, 1, 0, 0, true, 200)
+            cur_enemy = random([enemy1, enemy2, enemy3, enemy4, enemy5])
+            cur_enemy.lane = lane3
+            lane3_enemies.push(cur_enemy)
+            break;
+          case 4:
+            enemy1 = new Demon(90, 10, 1, 0, 0, true, 90)
+            enemy2 = new Angel(60, 5, 1, 0, 0, true, 60)
+            enemy3 = new Tyrant(150, 8, 1, 0, 0, true, 150)
+            enemy4 = new Distract(80, 4, 1, 0, 0, true, 80)
+            enemy5 = new Necromancer(200, 1, 1, 0, 0, true, 200)
+            cur_enemy = random([enemy1, enemy2, enemy3, enemy4, enemy5])
+            cur_enemy.lane = lane4
+            lane4_enemies.push(cur_enemy)
+            break;
+          case 5:
+            enemy1 = new Demon(90, 10, 1, 0, 0, true, 90)
+            enemy2 = new Angel(60, 5, 1, 0, 0, true, 60)
+            enemy3 = new Tyrant(150, 8, 1, 0, 0, true, 150)
+            enemy4 = new Distract(80, 4, 1, 0, 0, true, 80)
+            enemy5 = new Necromancer(200, 1, 1, 0, 0, true, 200)
+            cur_enemy = random([enemy1, enemy2, enemy3, enemy4, enemy5])
+            cur_enemy.lane = lane5
+            lane5_enemies.push(cur_enemy)
+            break;
+        }
+      }
+      break;
   }
 }
 
 class Base {
-  constructor(health, saveState, maxH, damage) {
+  constructor(health, saveState, maxH, damage, x = 0, y=750) {
     this.health = health;
     this.saved = saveState;
     this.maxH = maxH;
     this.dmg = damage;
+    this.x = x
+    this.y = y
   }
   detect(enemy) {
     if (dist(enemy.x, enemy.y, this.x, this.y) < 3 && enemy.visibility) {
@@ -765,14 +1147,9 @@ class Base {
   }
 }
 
-class Menu {
-  constructor(towers){
-    this.towers = towers
-  }
-}
 
 class Shop {
-  constructor(inventory, discount, special, anger) {
+  constructor(inventory, special, anger, discount=1) {
     this.inventory = inventory;
     this.discount = discount;
     this.special = special;
@@ -866,7 +1243,7 @@ function menuCreation(i){
     push();
     fill("green")
     tower_list[i][0].x = 750
-    tower_list[i][0].y = 100 + i * 150 
+    tower_list[i][0].y = 100 + i * 200 
     tower_list[i][0].display();
     pop();
 
@@ -879,6 +1256,7 @@ function menuCreation(i){
        20)
     fill("white")
     textAlign(CENTER, CENTER)
+    textFont(retro_font)
     text(tower_list[i][1], tower_list[i][0].x,
        tower_list[i][0].y+70)
     pop();
@@ -893,7 +1271,7 @@ function menuCreation(i){
 class Tower {
   constructor(
     type,
-    attack,
+    damage,
     range,
     AOE,
     price,
@@ -908,7 +1286,7 @@ class Tower {
     img
   ) {
     this.type = type;
-    this.attack = attack;
+    this.damage = damage;
     this.range = range;
     this.AOE = AOE;
     this.price = price;
@@ -970,14 +1348,15 @@ class Tower {
   clearTint() {
     noTint();
   }
-  attack(enemy, enemies) {
-    enemy.health -= this.attack * this.typing(enemy);
+  attack(enemy, enemies=null) {
     if (this.AOE > 0) {
       for (var enem of enemies) {
         if (dist(enem.x, enem.y, enemy.x, enemy.y) < AOE) {
-          enem.health -= this.attack * this.typing(enemy);
+          enem.health -= this.damage * this.typing(enemy);
         }
       }
+    }else{
+      enemy.health -= this.damage * this.typing(enemy);
     }
   }
   
@@ -986,7 +1365,7 @@ class Tower {
 class Flame extends Tower {
   constructor(
     type,
-    attack,
+    damage,
     range,
     AOE,
     price,
@@ -1002,7 +1381,7 @@ class Flame extends Tower {
   ) {
     super(
       type,
-      attack,
+      damage,
       range,
       AOE,
       price,
@@ -1058,7 +1437,7 @@ class Flame extends Tower {
 class Ice extends Tower {
   constructor(
     type,
-    attack,
+    damage,
     range,
     AOE,
     price,
@@ -1074,7 +1453,7 @@ class Ice extends Tower {
   ) {
     super(
       type,
-      attack,
+      damage,
       range,
       AOE,
       price,
@@ -1125,7 +1504,7 @@ class Ice extends Tower {
 class Rage extends Tower {
   constructor(
     type,
-    attack,
+    damage,
     range,
     AOE,
     price,
@@ -1141,7 +1520,7 @@ class Rage extends Tower {
   ) {
     super(
       type,
-      attack,
+      damage,
       range,
       AOE,
       price,
@@ -1194,7 +1573,7 @@ class Rage extends Tower {
 class Bomb extends Tower {
   constructor(
     type,
-    attack,
+    damage,
     range,
     AOE,
     price,
@@ -1210,7 +1589,7 @@ class Bomb extends Tower {
   ) {
     super(
       type,
-      attack,
+      damage,
       range,
       AOE,
       price,
@@ -1300,7 +1679,7 @@ function detection(enemies, x, y, range){
   let min_enemy_range = 1000
   let min_enemy = null
   for(var enemy of enemies){
-    if(dist(x, y, enemy.x, enemy.y) < range){
+    if(dist(x, y, enemy.x, enemy.y) < range && enemy.visibility){
       if(dist(x, y, enemy.x, enemy.y) < min_enemy_range){
         min_enemy_range = dist(x, y, enemy.x, enemy.y)
         min_enemy = enemy
