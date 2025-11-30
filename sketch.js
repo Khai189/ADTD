@@ -72,7 +72,7 @@ let test_tower;
 
 function preload() {
   image_soul = loadImage("temp_soul.webp");
-  test_tower = loadImage("test-tower-defense.avif");
+  test_tower = loadImage("images/ice.png");
 }
 
 function setup() {
@@ -221,8 +221,7 @@ function draw() {
         tower.y = (h * width) / 40 - width / 40;
         tower.tintImageGreen();
           
-      }
-    } else if (game.env[h][w] == 6) {
+      }else if (game.env[h][w] == 6) {
       game.env[h][w] = 7
       game.show_matrix();
       tower.place();
@@ -240,6 +239,7 @@ function draw() {
     } else {
       tower = null
     }
+    } 
     if(tower){
       tower.display();
       tower.clearTint();
