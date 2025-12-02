@@ -302,6 +302,13 @@ function setup() {
 
 function draw() {
   background(background_img);
+  push();
+  imageMode(CENTER);
+  image(huge_portal, 780, 90, 100, 100)
+  image(huge_portal, 20, 290, 100, 100)
+  image(huge_portal, 780, 490, 100, 100)
+
+  pop();
   // In-between rounds
 
   if(starting_screen){
