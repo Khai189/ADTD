@@ -1824,7 +1824,7 @@ function flame(enemy) {
 
 function slow(enemy) {
   iced.push([enemy, 0]);
-  og_speed.push(enemy.speed);
+  og_speed.push(constrain(enemy.speed, 1, enemy.speed));
 }
 
 
