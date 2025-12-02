@@ -636,7 +636,7 @@ function draw() {
       }
       
       if(placed_tower instanceof Ice){
-          if(random(0, 100) <= 1){
+          if(random(0, 100) <= 1 && iced.length < 1){
             for(var enemy of current_enemies){
               slow(enemy);
               slowed_screen = true;
@@ -1815,9 +1815,7 @@ function flame(enemy) {
 }
 
 function slow(enemy) {
-  if(!iced.includes(enemy)){
-    iced.push([enemy, 0]);
-  }
+  iced.push([enemy, 0]);
   og_speed.push(enemy.speed);
 }
 
