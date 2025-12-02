@@ -597,6 +597,7 @@ function draw() {
   
   if(action_time_elapsed >=1000){
     for(var enemy of current_enemies){
+      base.attack(enemy)
       if(enemy.position >= enemy.lane.length-9-enemy.speed){
         enemy.attack(base)
         x = enemy.lane[enemy.position][0]
@@ -1306,7 +1307,7 @@ class Base {
     this.y = y
   }
   detect(enemy) {
-    if(dist(enemy.lane[position][0]*20, enemy.lane[position][1]*20, this.x, this.y) < 100 && enemy.visibility) {
+    if(dist(enemy.lane[enemy.position][0]*20, enemy.lane[enemy.position][1]*20, this.x, this.y) < 100 && enemy.visibility) {
       return true;
     } else {
       return false;
