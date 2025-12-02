@@ -496,7 +496,7 @@ function draw() {
       }
     }
     if(enem instanceof Necromancer){
-      if(random(0, 5000) < 1){
+      if(random(0, 2000) < 1){
         if(dead_enemies.length >1){
           enem.revive(dead_enemies)
         }
