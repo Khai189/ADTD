@@ -189,7 +189,7 @@ function setup() {
   );
   test_bomb_tower = new Bomb(
     "physical",
-    8,
+    6,
     310,
     40,
     20,
@@ -205,7 +205,7 @@ function setup() {
   );
   test_rage_tower = new Rage(
     "bane",
-    4,
+    2,
     510,
     0,
     20,
@@ -329,7 +329,8 @@ function draw() {
     portals = [];
     towers = [];
     tower_list = [];
-    let towers_to_push = 4 + current_wave*2;
+    available_towers = [];
+    let towers_to_push = 2 + current_wave*2;
     for(let i = 0;i<towers_to_push;i++){
       available_towers.push(random([test_fire_tower, test_ice_tower, test_rage_tower, test_bomb_tower]))
     }
