@@ -571,6 +571,7 @@ function draw() {
     for (let i = iced.length - 1; i >= 0; i--) {
       if (iced[i][1] < 5) {
         iced[i][0].speed =0;
+        iced[i][0].health-=1
         iced[i][1] += 1;
       } else {
         iced[i][0].speed = og_speed[i];
@@ -1814,7 +1815,9 @@ function flame(enemy) {
 }
 
 function slow(enemy) {
-  iced.push([enemy, 0]);
+  if(!iced.includes(enemy)){
+    iced.push([enemy, 0]);
+  }
   og_speed.push(enemy.speed);
 }
 
