@@ -174,7 +174,7 @@ function setup() {
   test_fire_tower = new Flame(
     "magical",
     3,
-    210,
+    310,
     0,
     20,
     1,
@@ -205,7 +205,7 @@ function setup() {
   );
   test_rage_tower = new Rage(
     "bane",
-    2,
+    3,
     410,
     0,
     20,
