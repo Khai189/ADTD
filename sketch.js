@@ -157,8 +157,8 @@ function setup() {
   );
   test_ice_tower = new Ice(
     "magical",
-    2,
-    210,
+    1,
+    310,
     0,
     20,
     1,
@@ -173,8 +173,8 @@ function setup() {
   );
   test_fire_tower = new Flame(
     "magical",
-    4,
-    310,
+    1,
+    210,
     0,
     20,
     1,
@@ -189,8 +189,8 @@ function setup() {
   );
   test_bomb_tower = new Bomb(
     "physical",
-    6,
-    310,
+    3,
+    250,
     40,
     20,
     1,
@@ -206,7 +206,7 @@ function setup() {
   test_rage_tower = new Rage(
     "bane",
     2,
-    510,
+    410,
     0,
     20,
     1,
@@ -484,12 +484,12 @@ function draw() {
     
 
     if(enem instanceof Distract){
-      if(random(0, 4000) < 1){
+      if(random(0, 2000) < 1){
         enem.minigame()
       }
     }
     if(enem instanceof Necromancer){
-      if(random(0, 10000) < 1){
+      if(random(0, 5000) < 1){
         if(dead_enemies.length >1){
           enem.revive(dead_enemies)
         }
@@ -509,7 +509,7 @@ function draw() {
       enem.taunt(current_enemies)
     }
     if(enem instanceof Angel){
-      if(random(0,3000) <= 1 && !rage){
+      if(random(0,2000) <= 1 && !rage){
         let restricted_tower = enem.restrict();
         if(restricted_tower){
           angel_lock = true;
@@ -634,7 +634,7 @@ function draw() {
       }
       
       if(placed_tower instanceof Ice){
-          if(random(0, 50) <= 1){
+          if(random(0, 150) <= 1){
             for(var enemy of current_enemies){
               slow(enemy);
               slowed_screen = true;
@@ -712,8 +712,11 @@ function draw() {
     
     if(rage_elapsed < 10000 && no_rage){
       for (var tower of towers){
-        tower.damage *= 2
-        tower.range *= 2
+        if(towwer.range > 410){
+          tower.damage *= 2
+          tower.range *= 2
+        }
+        
       }
       no_rage = false
     }else if(rage_elapsed <= 1000){
