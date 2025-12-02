@@ -301,6 +301,18 @@ function setup() {
 }
 
 function draw() {
+  if(current_wave == 5){
+    push();
+    background(0)
+    textAlign(CENTER, CENTER)
+    fill(203, 195, 227)
+    textFont(retro_font)
+    textSize(25)
+    text("Huh, I guess you won. Congrats, you're one of the few", width/2, height/2)
+    pop();
+
+
+  }
   background(background_img);
   push();
   imageMode(CENTER);
