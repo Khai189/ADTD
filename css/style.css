@@ -191,4 +191,26 @@ div#enemys:hover >.enemy_inner{
 
 }
 
+div#links{
+  justify-content: center;
+  text-align: center;
+  margin: center;
+  
+}
+
+div#left{
+  justify-content: center;
+  text-align: center;
+  display: inline-block;
+  vertical-align: top;
+}
+
+div#right{
+  justify-content: center;
+  text-align: center;
+  display: inline-block;
+  vertical-align: top;
+}
+
+
 
