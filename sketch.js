@@ -10,7 +10,7 @@ let menu = false;
 let tower_list = [];
 let pressed = false;
 let starting_screen = true;
-let current_wave = 1;
+let current_wave = 0;
 let wave_activated = true;
 let cur_tower;
 let rage_elapsed = 0;
@@ -131,8 +131,8 @@ function preload() {
   necro_img = loadImage("images/necro.png");
   huge_portal = loadImage("images/huge_portal.png")
   base_img = loadImage("images/base.png")
+  background_img = loadImage("images/background.png")
 }
-
 function setup() {
   createCanvas(800, 800);
   background(220);
@@ -301,11 +301,12 @@ function setup() {
 }
 
 function draw() {
-  background(0);
+  background(background_img);
   // In-between rounds
 
   if(starting_screen){
     push();
+    background(0)
     textAlign(CENTER, CENTER)
     fill(203, 195, 227)
     textFont(retro_font)
@@ -342,7 +343,7 @@ function draw() {
   
  
 
-  game.show_matrix();
+  
   // Controls how to place down towers (don't ask how long it took to implement this...)
   if(menu){
     for (let i = 0;i<tower_list.length;i++) {
@@ -462,7 +463,7 @@ function draw() {
         }
       }
       money += pos_enemies_money[pos_enemies.indexOf(enem)];
-      current_enemies.splice(enemies.indexOf(enem), 1);
+      current_enemies.splice(current_enemies.indexOf(enem), 1);
       const pos_dead = flames.map((inner) => inner[0]);
       const pos_slow = iced.map((inner) => inner[0]);
       if (pos_dead.includes(enem)) {
@@ -1514,7 +1515,7 @@ class Tower {
         }
         
       }
-      enemy.health = enemy.health-this.damage;
+      enemy.health = enemy.health-this.damage/2;
     }else{
       enemy.health = enemy.health - this.damage;
     }
