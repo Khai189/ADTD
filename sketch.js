@@ -157,7 +157,7 @@ function setup() {
   );
   test_ice_tower = new Ice(
     "magical",
-    1,
+    2,
     310,
     0,
     20,
@@ -173,7 +173,7 @@ function setup() {
   );
   test_fire_tower = new Flame(
     "magical",
-    1,
+    3,
     210,
     0,
     20,
@@ -189,7 +189,7 @@ function setup() {
   );
   test_bomb_tower = new Bomb(
     "physical",
-    3,
+    5,
     250,
     40,
     20,
@@ -634,7 +634,7 @@ function draw() {
       }
       
       if(placed_tower instanceof Ice){
-          if(random(0, 150) <= 1){
+          if(random(0, 100) <= 1){
             for(var enemy of current_enemies){
               slow(enemy);
               slowed_screen = true;
@@ -712,7 +712,7 @@ function draw() {
     
     if(rage_elapsed < 10000 && no_rage){
       for (var tower of towers){
-        if(towwer.range > 410){
+        if(tower.range > 410){
           tower.damage *= 2
           tower.range *= 2
         }
