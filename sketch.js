@@ -518,7 +518,7 @@ function draw() {
     if(enem instanceof Angel){
       if(random(0,2000) <= 1 && !rage){
         let restricted_tower = enem.restrict();
-        if(restricted_tower){
+        if(restricted_tower && !locked_angel_towers.includes(restricted_tower)){
           angel_lock = true;
           locked_angel_towers.push([restricted_tower, 0, 0])
         }
@@ -717,7 +717,7 @@ function draw() {
     }
   }
   // how rage boosts other towers
-  if(rage && !angel_lock){
+  if(rage){
     
     if(rage_elapsed < 10000 && no_rage){
       for (var tower of towers){
