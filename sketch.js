@@ -310,7 +310,7 @@ function draw() {
     textSize(25)
     text("Huh, I guess you won. Congrats, you're one of the few", width/2, height/2)
     pop();
-
+    return;
 
   }
   background(background_img);
