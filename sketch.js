@@ -721,10 +721,8 @@ function draw() {
     
     if(rage_elapsed < 10000 && no_rage){
       for (var tower of towers){
-        if(tower.range > 410){
-          tower.damage *= 2
-          tower.range *= 2
-        }
+        tower.damage *= 2
+        tower.range *= 2
         
       }
       no_rage = false
@@ -739,8 +737,11 @@ function draw() {
       pop();
     }else if (rage_elapsed >= 10000){
       for (var tower of towers){
-        tower.damage /=2
-        tower.range /=2
+        if(tower.range > 410){
+          tower.damage /=2
+          tower.range /=2
+        } 
+        
       }
       rage = false;
       no_rage=true;
