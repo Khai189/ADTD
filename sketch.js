@@ -643,7 +643,7 @@ function draw() {
       }
       
       if(placed_tower instanceof Ice){
-          if(random(0, 100) <= 1 && iced.length < 1){
+          if(random(0, 100) <= 1 && iced.length ==0 ){
             for(var enemy of current_enemies){
               slow(enemy);
               slowed_screen = true;
