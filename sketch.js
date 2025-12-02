@@ -130,6 +130,7 @@ function preload() {
   distract_img = loadImage("images/distract.png");
   necro_img = loadImage("images/necro.png");
   huge_portal = loadImage("images/huge_portal.png")
+  base_img = loadImage("images/base.png")
 }
 
 function setup() {
@@ -156,7 +157,7 @@ function setup() {
   );
   test_ice_tower = new Ice(
     "magical",
-    55,
+    2,
     210,
     0,
     20,
@@ -172,8 +173,8 @@ function setup() {
   );
   test_fire_tower = new Flame(
     "magical",
-    20,
-    210,
+    4,
+    310,
     0,
     20,
     1,
@@ -188,8 +189,8 @@ function setup() {
   );
   test_bomb_tower = new Bomb(
     "physical",
-    20,
-    210,
+    8,
+    310,
     40,
     20,
     1,
@@ -204,7 +205,7 @@ function setup() {
   );
   test_rage_tower = new Rage(
     "bane",
-    10,
+    4,
     510,
     0,
     20,
@@ -220,6 +221,14 @@ function setup() {
   );
 
   // Path creation
+
+  for(let i = 0;i<5;i++){
+    lane1.push([0, 0])
+    lane2.push([0, 0])
+    lane3.push([0, 0])
+    lane4.push([0, 0])
+    lane5.push([0, 0])
+  }
 
   
   for(let i = 1; i<41;i++){
@@ -316,14 +325,18 @@ function draw() {
     lane3_enemies = [];
     lane4_enemies = [];
     lane5_enemies = [];
+    portals = [];
     towers = [];
     tower_list = [];
     let towers_to_push = 4 + current_wave*2;
     for(let i = 0;i<towers_to_push;i++){
       available_towers.push(random([test_fire_tower, test_ice_tower, test_rage_tower, test_bomb_tower]))
     }
-    WaveProgression(current_wave+1)
+    WaveProgression(current_wave)
     current_enemies = [...current_enemies, ...lane1_enemies, ...lane2_enemies, ...lane3_enemies, ...lane4_enemies, ...lane5_enemies]
+    for(var enemy of current_enemies){
+      enemy.position = random([0, 1, 2, 3, 4, 5])
+    }
   }
   
   
@@ -355,7 +368,7 @@ function draw() {
         tower.tintImageGreen();
         tower.display();
     }else if (game.env[w][h] == 6 && !mouseIsPressed && cur_tower.constructor == tower.constructor) {
-      game.env[w][h] = 7
+      game.env[w][h] = 6 
       game.show_matrix();
       tower.place();
       tower.clearTint();
@@ -418,9 +431,9 @@ function draw() {
       circle(placed_tower.x, placed_tower.y, placed_tower.range);
       locked = locked == true ? false : true;
       if(placed_tower.AOE>0){
-        if(detection(current_enemies, placed_tower.x, placed_tower.y, placed_tower.range)){
-          near = detection(current_enemies, placed_tower.x, placed_tower.y, placed_tower.range)
-          circle(near.lane[near.position][0], near.lane[near.position][1], placed_tower.AOE)
+        if(detection(current_enemies, placed_tower.x, placed_tower.y, placed_tower.range/2)){
+          near = detection(current_enemies, placed_tower.x, placed_tower.y, placed_tower.range/2)
+          circle(near.lane[near.position][0]*20, near.lane[near.position][1]*20, placed_tower.AOE)
         }else{
           fill(0, 0, 0, 100);
           circle(placed_tower.x + placed_tower.range/4,
@@ -444,10 +457,9 @@ function draw() {
     if (enem.health <= 0) {
       activated = true
       if(enem instanceof Demon){
-        if(enem.active_portal){
-           enem.portal(enem.active_portal[0], enem.active_portal[1])
+        if(enem.active_portal!=null){
+          destroyPortal(enem.active_portal[0], enem.active_portal[1])
         }
-       
       }
       money += pos_enemies_money[pos_enemies.indexOf(enem)];
       current_enemies.splice(enemies.indexOf(enem), 1);
@@ -464,7 +476,10 @@ function draw() {
 
     let x_cur = enem.lane[enem.position][0]
     let y_cur = enem.lane[enem.position][1]
-    enem.display(x_cur, y_cur)
+    if(enem.position > 4){
+      enem.display(x_cur, y_cur)
+    }
+    
 
     if(enem instanceof Distract){
       if(random(0, 4000) < 1){
@@ -478,14 +493,18 @@ function draw() {
         }
       }
     }
-    if(enem instanceof Demon){
-      if (random(0, 3000) <= 1 && !enem.active_portal){
-        let x, y = enem.portal(enem.lane[enem.position][0], enem.lane[enem.position][1])
-        enem.active_portal = [x, y]
+    if(enem instanceof Demon && enem.position > 4){
+      if (random(0, 3000) <= 1 && enem.active_portal == null){
+        enem.portal(enem.lane[enem.position][0], enem.lane[enem.position][1])
+        enem.active_portal = [enem.lane[enem.position][0], enem.lane[enem.position][1]]
+        print("Portals")
+        print(portals)
+        print("Initialized active portal")
+        print(enem.active_portal)
       }
     }
     if(enem instanceof Tyrant){
-      taunt(current_enemies)
+      enem.taunt(current_enemies)
     }
     if(enem instanceof Angel){
       if(random(0,3000) <= 1 && !rage){
@@ -570,57 +589,50 @@ function draw() {
   }
   
   
-  if(menu){
-    for(let i = 0;i<200;i++){
-      setTimeout(menuCreation(i), 500)
-      
-    }
-    circle(720, height/2, 30)
-    if (dist(mouseX, mouseY, 720, height/2) < 10 && mouseIsPressed){
-      menu = false;
-  }
-  }else{
-    showMenu(mouseX, mouseY)
-  }
+  
 
   // Enemy Logic and Tower Logic happening every second (actual walking etc)
   
   if(action_time_elapsed >=1000){
     for(var enemy of current_enemies){
-      if(enemy.position == enemy.lane.length-1){
+      if(enemy.position >= enemy.lane.length-9-enemy.speed){
         enemy.attack(base)
         x = enemy.lane[enemy.position][0]
         y = enemy.lane[enemy.position][1]
-        enemy.display(x, y)
-        return;
-      }
+        if(enemy.position>4){
+          enemy.display(x, y)
+        }
+      }else{
         x_pos = enemy.lane[enemy.position][0]
         y_pos = enemy.lane[enemy.position][1]
         if(game.env[x_pos][y_pos]==2){
-          enemy.position += constrain(enemy.lane.length-1 - enemy.position, 0, 10)
+          enemy.position += constrain(enemy.lane.length-10 - enemy.position, 0, 10)
         }else{
           enemy.position += enemy.speed
+          enemy.position = constrain(0, enemy.position, enemy.lane.length-10 - enemy.position)
         }
         x = enemy.lane[enemy.position][0]
         y = enemy.lane[enemy.position][1]
-        enemy.display(x, y)
+        
+        if(enemy.position>4){
+          enemy.display(x, y)
+        }
       }
+    }
 
         
     for(var placed_tower of towers){
       enemy_to_attack = detection(current_enemies,
       placed_tower.x,
       placed_tower.y,
-      placed_tower.range
+      placed_tower.range/2
       )
-      print(enemy_to_attack)
       if(enemy_to_attack){
-        print(enemy_to_attack.health)
         placed_tower.attack(enemy_to_attack, current_enemies);
       }
       
       if(placed_tower instanceof Ice){
-          if(random(0, 20) <= 1){
+          if(random(0, 50) <= 1){
             for(var enemy of current_enemies){
               slow(enemy);
               slowed_screen = true;
@@ -634,13 +646,47 @@ function draw() {
   }
 
   // Wave Advancer
+  if(base.health <= 0 ){
+    background(0);
+    current_enemies = [];
+    towers = [];
+    if(mouseIsPressed){
+      base = new Base(500, 0, 500);
+      current_wave = 0;
+      wave_activated=true;
+    }else{
+      return;
+    }
+    
+  }else{
+    push()
+    imageMode(CENTER)
+    image(base_img, 100, 650, 200, 200)
+    pop()
+  }
+  
 
   if(current_enemies.length == 0 && !wave_activated){
     current_wave += 1
     wave_activated = true
   }
   for(var portal of portals){
+    push()
+    imageMode(CENTER)
     image(portal_img, portal[0]*20, portal[1]*20, 60, 60);
+    pop();
+  }
+  if(menu){
+    for(let i = 0;i<200;i++){
+      setTimeout(menuCreation(i), 500)
+      
+    }
+    circle(720, height/2, 30)
+    if (dist(mouseX, mouseY, 720, height/2) < 10 && mouseIsPressed){
+      menu = false;
+  }
+  }else{
+    showMenu(mouseX, mouseY)
   }
   if(slowed_screen){
     if(slowed_screen_elapsed < 1000){
@@ -686,10 +732,11 @@ function draw() {
       no_rage=true;
     }
     rage_elapsed+=deltaTime
-    print(rage_elapsed)
   }else{
     rage_elapsed = 0;
   }
+
+  
 
   // Distract minigame logic
   if (lock) {
@@ -799,12 +846,11 @@ function placePortal(x, y) {
   portals.push(
     [x, y]);
   game.env[x][y] = 2;
-  return x, y
 }
 
 function destroyPortal(x, y) {
   for (let i = 0; i < portals.length; i++) {
-    if (x == portals[i][0] && y == portals[i][0]) {
+    if (x == portals[i][0] && y == portals[i][1]) {
       portals.splice(i, 1);
       game.env[x][y] = 1;
     }
@@ -854,6 +900,7 @@ class Demon extends Enemy {
     } else {
       placePortal(x, y);
     }
+    return x, y
   }
 }
 
@@ -944,8 +991,12 @@ class Tyrant extends Enemy {
   }
 
   taunt(enemies) {
+    push();
+    fill(244, 241, 134, 100)
+    circle(this.lane[this.position][0]*20, this.lane[this.position][1]*20, 100)
+    pop();
     for (var enemy of enemies) {
-      if (dist(enemy.x, enemy.y, this.x, this.y) < 20 && !enemy instanceof Tyrant) {
+      if (dist(enemy.lane[enemy.position][0], enemy.lane[enemy.position][0], this.lane[this.position][0], this.lane[this.position][1]) < 100 && !enemy instanceof Tyrant) {
         enemy.visibility = false;
       }
     }
@@ -1241,7 +1292,7 @@ function WaveProgression(wave) {
 }
 
 class Base {
-  constructor(health, saveState, maxH, damage, x = 0, y=750) {
+  constructor(health, saveState, maxH, damage=2, x = 100, y=650) {
     this.health = health;
     this.saved = saveState;
     this.maxH = maxH;
@@ -1250,7 +1301,7 @@ class Base {
     this.y = y
   }
   detect(enemy) {
-    if (dist(enemy.x, enemy.y, this.x, this.y) < 3 && enemy.visibility) {
+    if(dist(enemy.lane[position][0]*20, enemy.lane[position][1]*20, this.x, this.y) < 100 && enemy.visibility) {
       return true;
     } else {
       return false;
@@ -1339,8 +1390,6 @@ function menuCreation(i){
   square(1300-i, height/2, 800);
 
   for(let i =0; i<available_towers.length; i++){
-    print("available_towers")
-    print(available_towers.length)
     tower = available_towers[i]
     let tower_type = tower.constructor
     const existing = tower_list.findIndex(item=> {
@@ -1453,8 +1502,6 @@ class Tower {
     noTint();
   }
   attack(enemy, enemies=null, damage) {
-    print("Current damage:")
-    print(this.damage)
     if (this.AOE > 0) {
       for (var enem of enemies) {
         let enem_x = enem.lane[enem.position][0]
@@ -1462,14 +1509,13 @@ class Tower {
         let og_x = enemy.lane[enemy.position][0]
         let og_y = enemy.lane[enemy.position][1]
         
-        if (dist(og_x*20, og_y*20, enem_x*20, enem_y*20) < this.AOE) {
-          enem.health = enem.health - this.damage;
+        if (dist(og_x*20, og_y*20, enem_x*20, enem_y*20) < this.AOE && enem.visibility) {
+          enem.health = enem.health - this.damage/2;
         }
-        enemy.health = enemy.health-this.damage;
+        
       }
+      enemy.health = enemy.health-this.damage;
     }else{
-      print("Damage outputs:" )
-      print(enemy.health, this.damage)
       enemy.health = enemy.health - this.damage;
     }
   }
