@@ -768,7 +768,6 @@ function draw() {
     } else if (lost >= 1) {
       current_enemies.forEach((enem) => {
         enem.speed *= 2;
-        enem.health += (enem.maxH-enem.health)/2
         enem.damage *= 2;
       });
       lock = false;
@@ -796,6 +795,7 @@ class Soul {
     imageMode(CENTER);
     if(this.direction == -1){
       push();
+      imageMode(CENTER);
       translate(this.x + this.radius, this.y + this.radius); 
       scale(-1, 1)
       image(image_soul, -this.radius, -this.radius, this.radius * 2, this.radius * 2);
