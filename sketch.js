@@ -1835,14 +1835,14 @@ function mousePressed() {
 }
 
 function detection(enemies, x, y, range){
-  let min_enemy_range = 1000
+  let min_enemy_range = -1
   let min_enemy = null
   for(var enemy of enemies){
     x1 = enemy.lane[enemy.position][0]
     y1 = enemy.lane[enemy.position][1]
     if(dist(x, y, x1*20, y1*20) < range && enemy.visibility != false){
-      if(dist(x, y, x1*20, y1*20) < min_enemy_range){
-        min_enemy_range = dist(x, y, x1*20, y1*20)
+      if(enemy.position > min_enemy_range){
+        min_enemy_range = enemy.position
         min_enemy = enemy
       }
     }
